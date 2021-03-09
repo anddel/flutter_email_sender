@@ -79,28 +79,23 @@ class FlutterEmailSenderPlugin(private val registrar: Registrar)
 
         val intent = Intent()
 
+        if (text != null) {
+            intent.putExtra(Intent.EXTRA_TEXT, text)
+        }
+        
         // We need a different intent action depending on the number of attachments.
         if (attachmentUris.size == 0) {
             intent.action = Intent.ACTION_SENDTO
             intent.data = Uri.parse("mailto:")
-            if (text != null) {
-                intent.putExtra(Intent.EXTRA_TEXT, text)
-            }
         } else {
             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
 
             if (attachmentUris.size == 1) {
                 intent.action = Intent.ACTION_SEND
                 intent.putExtra(Intent.EXTRA_STREAM, attachmentUris.first())
-                if (text != null) {
-                    intent.putExtra(Intent.EXTRA_TEXT, text)
-                }
             } else {
                 intent.action = Intent.ACTION_SEND_MULTIPLE
                 intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, ArrayList(attachmentUris))
-                if (text != null) {
-                    intent.putCharSequenceArrayListExtra(Intent.EXTRA_TEXT, arrayListOf(text))
-                }
             }
 
             // Add a selector intent to make sure that only email apps are shown, instead of just any app that can
